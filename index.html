@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css" />
+    <!-- <link rel="icon" type="image/svg" href="./" sizes="any"> -->
+
+    <title>Combat Game</title>
+</head>
+<body>
+    <!-- gamebar -->
+    <div class="gameBar">
+        <div class="hpBarContainer reverse">
+            <div class="hpBar" id="hp1"></div>
+        </div>
+        <div id="timer"></div>
+        <div class="hpBarContainer">
+            <div class="hpBar" id="hp2"></div>
+        </div>
+    </div>
+    <h1 id="result">TIE</h1>
+
+    <canvas></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+<!-- class Game{
+
+    public ctx: CanvasRenderingContext2D;
+    public canvas:HTMLCanvasElement;
+
+    public constructor()
+    {
+        const WIDTH: number = 1280;
+        const HEIGHT: number = 720;
+        const GRAVITY: number = .7;
+
+        this.canvas = document.querySelector('canvas') as HTMLCanvasElement;
+        this.canvas.width = WIDTH;
+        this.canvas.height = HEIGHT;
+
+        this.ctx = this.canvas.getContext('2d')!;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        let background = new Image();
+        background.src = "./img/background.jpg";
+        background.onload = () => {
+            this.ctx.drawImage(background,0,0);
+        }
+
+        let castle = new Image();
+        castle.src = "./img/castle.png";
+        castle.onload = () => {
+            this.ctx.drawImage(castle, 0, 500, 200, 200);
+        }
+    }
+
+}
+
+class Player{
+
+    private img:HTMLImageElement;
+    private imgSrc: string;
+    private cx:number;
+    private cy:number;
+    private sx:number;
+    private sy:number;
+    private width:number;
+    private height:number;
+    private ctx:CanvasRenderingContext2D;
+
+    public constructor(
+        ctx:CanvasRenderingContext2D, 
+        imgSrc:string, 
+        cx:number, 
+        cy:number, 
+        sx:number, 
+        sy:number, 
+        width:number, 
+        height:number )
+    {
+        this.ctx = ctx;
+        this.cx = cx;
+        this.cy = cy;
+        this.sx = sx;
+        this.sy = sy;
+        this.height = height;
+        this.width = width;
+        this.img = new Image();
+        this.img.src = imgSrc;
+    }
+
+    // ========== DRAW ==========
+    draw(){
+        this.img.onload = () => {
+            this.ctx.drawImage(this.img, this.cx, this.cy, this.width, this.height);
+        }
+    }
+
+    update()
+    {
+        this.draw();
+        console.log('UPDATE');
+    }
+
+    move()
+    {
+        window.addEventListener('keydown', (e) =>{
+            console.log(e.key);
+            switch(e.key){
+                case 'd':
+                    this.cx += this.sx;
+                    break;
+                case 'a':
+                    this.cx -= this.sx;
+                    break;
+                case 'w':
+                    this.cy -= this.sy;
+                    break;
+            }
+        })
+    }
+
+}
+
+let game = new Game();
+
+//let player2 = new Player(game.ctx, './img/warrior2.png', 450, 470, 5, 5, 150, 250);
+let player1 = new Player(game.ctx, './img/warrior1.png', 250, 470, 5, 5, 150, 250);
+
+player1.draw();
+player1.move();
+
+
+function animate():void{
+    // Animation
+    window.requestAnimationFrame(animate);
+    player1.update();
+
+    console.log('PRUEBA');
+
+}
+animate(); -->
