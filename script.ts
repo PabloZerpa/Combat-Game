@@ -1,3 +1,4 @@
+
 // ========== VARIABLES ==========
 
 // CONSTANTS
@@ -5,19 +6,27 @@ const canvas:HTMLCanvasElement = document.querySelector('canvas') as HTMLCanvasE
 const ctx:CanvasRenderingContext2D = canvas.getContext('2d')!;
 const WIDTH:number = 1280;
 const HEIGHT:number = 720;
+const FLOOR:number = 450;
 const SPEEDX:number = 10, SPEEDY:number = 10;
 const ACE:number = 10;
 const GRAVITY:number = 1;
+
+let hp1 = document.querySelector('#hp1') as HTMLCanvasElement;
+let hp2 = document.querySelector('#hp2') as HTMLCanvasElement;
+
 
 // ASSETS
 let background = new Image();
 let warrior1 = new Image();
 let warrior2 = new Image();
+let winner:boolean = false;
+let pause:boolean = false;
+let restart:boolean = false;
 
 
 let player1, player2;
 let key=[];
-let timer:number = 120;
+let timer:number = 121;
 let timerId:number;
 
 let timerContainer = document.querySelector('#timer') as HTMLCanvasElement;
@@ -26,11 +35,13 @@ let result = document.querySelector('#result') as HTMLCanvasElement;
 // ========== KEYDOWN ==========
 document.addEventListener('keydown', function (e) {
     key[e.key]=true;
+
 }, false);
 
 // ========== KEYUP ==========
 document.addEventListener('keyup', function (e) {
     key[e.key]=false;
+
 }, false);
 
 // ========== PLAYER ==========
@@ -66,55 +77,59 @@ function Player(name:string, img:HTMLImageElement, x:number, y:number, width:num
     };
 
     this.move = function (enemy,right:string,left:string,jump:string,attack:string){
-        // Set gravity
-        this.speedy += 3;
-        if (this.speedy > 10) {
-            this.speedy = 10;
-        }
 
-        // Move
-        if ((this.y !== 600) && key[jump]) {
-            //player1.y -= SPEEDY;
-            this.speedy = -10;
-        }
-        // Move player in y
-        this.y += this.speedy;
-
-        if (key[right]) {
-            //player1.x += SPEEDX;
-            this.speedx+=ACE;
-        }
-        if (key[left]) {
-            //player1.x -= SPEEDX;
-            this.speedx-=ACE;
-        }
-        if (key[attack]) {
-            if (this.intersects(enemy)) {
-                enemy.hp -= 20;
-                document.querySelector(enemy.hpBar).style.width = enemy.hp + '%';
-                if(enemy.hp <= 0)
-                    determineWinner(this, enemy, timerId);
+        if(!pause)
+        {
+            // Set gravity
+            this.speedy += 5;
+            if (this.speedy > 10) {
+                this.speedy = 20;
+            }
+    
+            // Move
+            if ((this.y !== FLOOR) && key[jump]) {
+                //player1.y -= SPEEDY;
+                this.speedy = -30;
+            }
+            // Move player in y
+            this.y += this.speedy;
+    
+            if (key[right]) {
+                //player1.x += SPEEDX;
+                this.speedx+=ACE;
+            }
+            if (key[left]) {
+                //player1.x -= SPEEDX;
+                this.speedx-=ACE;
+            }
+            if (key[attack]) {
+                if (this.intersects(enemy)) {
+                    enemy.hp -= 20;
+                    document.querySelector(enemy.hpBar).style.width = enemy.hp + '%';
+                    if(enemy.hp <= 0)
+                        determineWinner(this, enemy, timerId);
+                }
+            }
+            this.speedx*=0.75;
+            this.x += this.speedx;
+    
+            // Out Screen
+            if (this.x >= (canvas.width - this.width)) {
+                this.x = (WIDTH - this.width);
+            }
+            if (this.y >= (canvas.height - this.height)) {
+                this.y = (HEIGHT - this.height);
+            }
+            if (this.x <= 0) {
+                this.x = 0;
+            }
+            if (this.y <= 0) {
+                this.y =0;
             }
         }
-        this.speedx*=0.75;
-        this.x += this.speedx;
 
-        // Out Screen
-        if (this.x >= (canvas.width - this.width)) {
-            this.x = (WIDTH - this.width);
-        }
-        if (this.y >= (canvas.height - this.height)) {
-            this.y = (HEIGHT - this.height);
-        }
-        if (this.x <= 0) {
-            this.x = 0;
-        }
-        if (this.y <= 0) {
-            this.y =0;
-        }
+
     }
-
-
 }
 
 // ========== PAINT ON CANVAS ==========
@@ -134,10 +149,11 @@ function paint(ctx:CanvasRenderingContext2D):void {
 // ========== MOVE FUNCTION ==========
 function move():void {
 
-    player1.move(player2,'d','a','w','s');
-
-    player2.move(player1,'ArrowRight','ArrowLeft','ArrowUp','ArrowDown');
-
+        if(!winner)
+        {
+            player1.move(player2,'d','a','w','s');
+            player2.move(player1,'ArrowRight','ArrowLeft','ArrowUp','ArrowDown');
+        }
 }
 
 // ========== Determine Winner ==========
@@ -145,6 +161,7 @@ function determineWinner(player1,player2,timerId)
 {
     clearTimeout(timerId)
     result.style.display = 'flex';
+    winner = true;
     if(player1.hp === player2.hp){
         result.innerHTML = 'Tie';
     }
@@ -172,16 +189,63 @@ function decreaseTimer()
 }
 decreaseTimer();
 
+
 // ========== REPAINT FUNCTION ==========
 function update():void {
     window.requestAnimationFrame(update);
     paint(ctx);
 }
 
+function reset(){
+    player1.x=140;
+    player1.hp=100;
+    player2.x=940;
+    player2.hp=100;
+    hp1.style.width = '100%';
+    hp2.style.width = '100%';
+
+    result.style.display = 'none';
+    result.innerHTML = '';
+
+    timer = 121;
+    clearTimeout(timerId);
+    decreaseTimer();
+    
+    pause = false;
+    winner = false;
+    restart= false;
+}
+
 // ========== RUN FUNCTION ==========
 function run():void {
+    
     setTimeout(run, 50);
     move();
+
+    // PAUSE
+    if (key['p']) {
+        pause = !pause;
+
+        if(pause){
+            result.style.display = 'flex';
+            result.innerHTML = 'Pause';
+            clearTimeout(timerId);
+        }
+        else{
+            result.style.display = 'none';
+            result.innerHTML = '';
+            decreaseTimer();
+        }
+    }
+
+    // Restart
+    if (key['r']) {
+        restart = !restart
+        if(restart){
+            reset();
+        }
+    }
+    
 }
 
 // ========== INIT FUNCTION ==========
@@ -195,8 +259,8 @@ function init():void {
     warrior2.src = './assets/warrior2.png';
 
     // PLAYER
-    player1 = new Player('Player 1',warrior1, 140, 600, 150, 250, '#hp1');
-    player2 = new Player('Player 2',warrior2, 940, 600, 150, 250,'#hp2');
+    player1 = new Player('Player 1',warrior1, 140, FLOOR, 150, 250, '#hp1');
+    player2 = new Player('Player 2',warrior2, 940, FLOOR, 150, 250,'#hp2');
 
     // Start game
     run();
