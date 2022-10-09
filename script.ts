@@ -6,31 +6,30 @@ const canvas:HTMLCanvasElement = document.querySelector('canvas') as HTMLCanvasE
 const ctx:CanvasRenderingContext2D = canvas.getContext('2d')!;
 const WIDTH:number = 1280;
 const HEIGHT:number = 720;
-const FLOOR:number = 450;
-const SPEEDX:number = 10, SPEEDY:number = 10;
+const FLOOR:number = HEIGHT - 40;
 const ACE:number = 10;
-const GRAVITY:number = 1;
+const GRAVITY:number = 5;
 
+// HTML ELEMENTS
 let hp1 = document.querySelector('#hp1') as HTMLCanvasElement;
 let hp2 = document.querySelector('#hp2') as HTMLCanvasElement;
-
+let timerContainer = document.querySelector('#timer') as HTMLCanvasElement;
+let result = document.querySelector('#result') as HTMLCanvasElement;
 
 // ASSETS
 let background = new Image();
 let warrior1 = new Image();
 let warrior2 = new Image();
+
+// STATES
 let winner:boolean = false;
 let pause:boolean = false;
 let restart:boolean = false;
-
 
 let player1, player2;
 let key=[];
 let timer:number = 121;
 let timerId:number;
-
-let timerContainer = document.querySelector('#timer') as HTMLCanvasElement;
-let result = document.querySelector('#result') as HTMLCanvasElement;
 
 // ========== KEYDOWN ==========
 document.addEventListener('keydown', function (e) {
@@ -41,11 +40,10 @@ document.addEventListener('keydown', function (e) {
 // ========== KEYUP ==========
 document.addEventListener('keyup', function (e) {
     key[e.key]=false;
-
 }, false);
 
 // ========== PLAYER ==========
-function Player(name:string, img:HTMLImageElement, x:number, y:number, width:number, height:number, hpBar:string) {
+function Player(name:string, img:HTMLImageElement, source:string, x:number, y:number, width:number, height:number, hpBar:string) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -55,6 +53,11 @@ function Player(name:string, img:HTMLImageElement, x:number, y:number, width:num
     this.hp = 100;
     this.hpBar = hpBar;
     this.name = name;
+    this.img = img;
+    this.imgSrc = 'assets/' + this.name;
+    this.img.src = this.imgSrc + source;
+    this.lastKey = 'right';
+    
 
     this.fill = function (ctx:CanvasRenderingContext2D) {
         if (ctx == null) {
@@ -80,31 +83,38 @@ function Player(name:string, img:HTMLImageElement, x:number, y:number, width:num
 
         if(!pause)
         {
+            let direction:string = this.lastKey;
+
             // Set gravity
-            this.speedy += 5;
+            this.speedy += GRAVITY;
             if (this.speedy > 10) {
                 this.speedy = 20;
             }
     
             // Move
             if ((this.y !== FLOOR) && key[jump]) {
-                //player1.y -= SPEEDY;
                 this.speedy = -30;
+                this.img.src = this.imgSrc + `/jump_${direction}.png`;
             }
             // Move player in y
             this.y += this.speedy;
     
             if (key[right]) {
-                //player1.x += SPEEDX;
                 this.speedx+=ACE;
+                this.img.src = this.imgSrc + '/run_right.png';
+                this.lastKey = 'right';
             }
             if (key[left]) {
-                //player1.x -= SPEEDX;
                 this.speedx-=ACE;
+                this.img.src = this.imgSrc + '/run_left.png';
+                this.lastKey = 'left';
             }
             if (key[attack]) {
+                this.img.src = this.imgSrc + `/attack_${direction}.png`;
+
                 if (this.intersects(enemy)) {
                     enemy.hp -= 20;
+                    enemy.img.src = this.imgSrc + `/dmg_${direction}.png`;
                     document.querySelector(enemy.hpBar).style.width = enemy.hp + '%';
                     if(enemy.hp <= 0)
                         determineWinner(this, enemy, timerId);
@@ -114,21 +124,20 @@ function Player(name:string, img:HTMLImageElement, x:number, y:number, width:num
             this.x += this.speedx;
     
             // Out Screen
-            if (this.x >= (canvas.width - this.width)) {
+            if (this.x >= (WIDTH - this.width)) {
                 this.x = (WIDTH - this.width);
             }
-            if (this.y >= (canvas.height - this.height)) {
-                this.y = (HEIGHT - this.height);
+            if (this.y >= (FLOOR - this.height)) {
+                this.y = (FLOOR - this.height);
             }
             if (this.x <= 0) {
                 this.x = 0;
             }
-            if (this.y <= 0) {
-                this.y =0;
+            if (this.y <= 100) {
+                this.y = 100;
             }
+
         }
-
-
     }
 }
 
@@ -174,7 +183,6 @@ function determineWinner(player1,player2,timerId)
 }
 
 // ========== Timer ==========
-
 function decreaseTimer()
 {
     if(timer>0){
@@ -190,19 +198,22 @@ function decreaseTimer()
 decreaseTimer();
 
 
-// ========== REPAINT FUNCTION ==========
+// ========== UPDATE FUNCTION ==========
 function update():void {
     window.requestAnimationFrame(update);
     paint(ctx);
 }
 
+// ========== RESET GAME FUNCTION ==========
 function reset(){
-    player1.x=140;
+    player1.x=200;
+    player2.x=1000;
     player1.hp=100;
-    player2.x=940;
     player2.hp=100;
     hp1.style.width = '100%';
     hp2.style.width = '100%';
+    player1.img.src = player1.imgSrc + '/idle_right.png';
+    player2.img.src = player2.imgSrc + '/idle_left.png';
 
     result.style.display = 'none';
     result.innerHTML = '';
@@ -254,13 +265,9 @@ function init():void {
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
 
-    // ASSETS
-    warrior1.src = './assets/warrior1.png';
-    warrior2.src = './assets/warrior2.png';
-
-    // PLAYER
-    player1 = new Player('Player 1',warrior1, 140, FLOOR, 150, 250, '#hp1');
-    player2 = new Player('Player 2',warrior2, 940, FLOOR, 150, 250,'#hp2');
+    // PLAYERS
+    player1 = new Player('Player 1',warrior1,'/idle_right.png', 200, FLOOR, 75, 125, '#hp1');
+    player2 = new Player('Player 2',warrior2,'/idle_left.png', 1000, FLOOR, 75, 125,'#hp2');
 
     // Start game
     run();
