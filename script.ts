@@ -6,7 +6,8 @@ const canvas:HTMLCanvasElement = document.querySelector('canvas') as HTMLCanvasE
 const ctx:CanvasRenderingContext2D = canvas.getContext('2d')!;
 const WIDTH:number = 1280;
 const HEIGHT:number = 720;
-const FLOOR:number = HEIGHT - 40;
+const FLOOR:number = 680;
+const RANGE:number = 30;
 const ACE:number = 10;
 const GRAVITY:number = 5;
 
@@ -43,7 +44,8 @@ document.addEventListener('keyup', function (e) {
 }, false);
 
 // ========== PLAYER ==========
-function Player(name:string, img:HTMLImageElement, source:string, x:number, y:number, width:number, height:number, hpBar:string) {
+function Player(name:string, img:HTMLImageElement, source:string, x:number, y:number, 
+                width:number, height:number, hpBar:string, lastKey:string) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -53,10 +55,10 @@ function Player(name:string, img:HTMLImageElement, source:string, x:number, y:nu
     this.hp = 100;
     this.hpBar = hpBar;
     this.name = name;
+    this.lastKey = lastKey;
     this.img = img;
     this.imgSrc = 'assets/' + this.name;
     this.img.src = this.imgSrc + source;
-    this.lastKey = 'right';
     
 
     this.fill = function (ctx:CanvasRenderingContext2D) {
@@ -72,10 +74,10 @@ function Player(name:string, img:HTMLImageElement, source:string, x:number, y:nu
             window.console.warn('Missing parameters on function intersects');
         } 
         else {
-            return (this.x < enemy.x + enemy.width &&
-                this.x + this.width > enemy.x &&
-                this.y < enemy.y + enemy.height &&
-                this.y + this.height > enemy.y);
+            return (this.x < enemy.x + (enemy.width + RANGE) &&
+                this.x + (this.width + RANGE) > enemy.x &&
+                this.y < enemy.y + (enemy.height + RANGE) &&
+                this.y + (this.height + RANGE) > enemy.y);
         }
     };
 
@@ -114,7 +116,7 @@ function Player(name:string, img:HTMLImageElement, source:string, x:number, y:nu
 
                 if (this.intersects(enemy)) {
                     enemy.hp -= 20;
-                    enemy.img.src = this.imgSrc + `/dmg_${direction}.png`;
+                    enemy.img.src = enemy.imgSrc + `/dmg_${direction}.png`;
                     document.querySelector(enemy.hpBar).style.width = enemy.hp + '%';
                     if(enemy.hp <= 0)
                         determineWinner(this, enemy, timerId);
@@ -122,8 +124,16 @@ function Player(name:string, img:HTMLImageElement, source:string, x:number, y:nu
             }
             this.speedx*=0.75;
             this.x += this.speedx;
+
+            if(!key[attack] && !key[left] && !key[right] && !key[jump])
+            {   
+                if(this.y != 575)
+                    this.img.src = this.imgSrc + `/fall_${direction}.png`;
+                else
+                    this.img.src = this.imgSrc + `/idle_${direction}.png`;  
+            }
     
-            // Out Screen
+            // Limit
             if (this.x >= (WIDTH - this.width)) {
                 this.x = (WIDTH - this.width);
             }
@@ -176,9 +186,13 @@ function determineWinner(player1,player2,timerId)
     }
     else if(player1.hp > player2.hp){
         result.innerHTML = player1.name + ' Wins';
+        player1.img.src = player1.imgSrc + `/win.png`; 
+        player2.img.src = player2.imgSrc + `/lose.png`;  
     }
     else if(player1.hp < player2.hp){
         result.innerHTML = player2.name + ' Wins';
+        player1.img.src = player1.imgSrc + `/lose.png`; 
+        player2.img.src = player2.imgSrc + `/win.png`;  
     }
 }
 
@@ -266,8 +280,8 @@ function init():void {
     canvas.height = HEIGHT;
 
     // PLAYERS
-    player1 = new Player('Player 1',warrior1,'/idle_right.png', 200, FLOOR, 75, 125, '#hp1');
-    player2 = new Player('Player 2',warrior2,'/idle_left.png', 1000, FLOOR, 75, 125,'#hp2');
+    player1 = new Player('Player 1',warrior1,'/idle_right.png', 200, FLOOR, 75, 125, '#hp1', 'right');
+    player2 = new Player('Player 2',warrior2,'/idle_left.png', 1000, FLOOR, 75, 125,'#hp2', 'left');
 
     // Start game
     run();
