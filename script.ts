@@ -19,6 +19,8 @@ let result = document.querySelector('#result') as HTMLCanvasElement;
 
 // ASSETS
 let background = new Image();
+let street1 = new Image();
+let street2 = new Image();
 let warrior1 = new Image();
 let warrior2 = new Image();
 
@@ -159,6 +161,12 @@ function paint(ctx:CanvasRenderingContext2D):void {
 
     background.src = './assets/background.jpg';
     ctx.drawImage(background,0,0);
+
+    street1.src = './assets/street.png';
+    ctx.drawImage(street1,0,FLOOR-10,700,60);
+
+    street2.src = './assets/street.png';
+    ctx.drawImage(street2,650,FLOOR-10,700,60);
 
     player1.fill(ctx);
     player2.fill(ctx);
