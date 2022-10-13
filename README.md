@@ -2,4 +2,4 @@
 ## Url: 
 
 # Screenshot
-![](./public/screenshoot-combat-game.png)
+![](./assets/screenshoot-combat-game.png)
