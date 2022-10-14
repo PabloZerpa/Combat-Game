@@ -6,24 +6,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg" href="./assets/shield.svg" sizes="any">
     <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" 
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <title>Combat Game</title>
 </head>
 <body>
     <!-- gamebar -->
     <div class="gameBar">
-        <div class="hpBarContainer reverse">
-            <div class="hpBar" id="hp1"></div>
+
+        <div class="heart"><i class="fa-solid fa-heart"></i></div>
+        <div class="border">
+            <div class="hpBarContainer reverse">
+                <div class="hpBar" id="hp1"></div>
+            </div>
         </div>
+
         <div id="timer"></div>
-        <div class="hpBarContainer">
-            <div class="hpBar" id="hp2"></div>
+
+        <div class="border">
+            <div class="hpBarContainer">
+                <div class="hpBar" id="hp2"></div>
+            </div>
+        </div>
+        <div class="heart"><i class="fa-solid fa-heart"></i></div>
+
+        <div class="menuBtn">
+            <button id="pauseBtn">
+                <i class="fa-solid fa-stop"></i>
+            </button>
+            <button id="restartBtn"><i class="fa-sharp fa-solid fa-rotate-right"></i></button>
         </div>
     </div>
+
     <h1 id="result"></h1>
 
     <canvas></canvas>
     
     <script src="script.js"></script>
+    
 </body>
 </html>

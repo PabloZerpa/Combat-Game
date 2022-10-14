@@ -16,11 +16,16 @@ let hp1 = document.querySelector('#hp1') as HTMLCanvasElement;
 let hp2 = document.querySelector('#hp2') as HTMLCanvasElement;
 let timerContainer = document.querySelector('#timer') as HTMLCanvasElement;
 let result = document.querySelector('#result') as HTMLCanvasElement;
+let pauseBtn = document.querySelector('#pauseBtn') as HTMLCanvasElement;
+let restartBtn = document.querySelector('#restartBtn') as HTMLCanvasElement;
 
 // ASSETS
 let background = new Image();
-let street1 = new Image();
-let street2 = new Image();
+let sky = new Image();
+let mount = new Image();
+let street = new Image();
+let shop = new Image();
+let castle = new Image();
 let warrior1 = new Image();
 let warrior2 = new Image();
 
@@ -44,6 +49,11 @@ document.addEventListener('keydown', function (e) {
 document.addEventListener('keyup', function (e) {
     key[e.key]=false;
 }, false);
+
+
+pauseBtn.addEventListener('click', pauseGame);
+
+restartBtn.addEventListener('click', reset);
 
 // ========== PLAYER ==========
 function Player(name:string, img:HTMLImageElement, source:string, x:number, y:number, 
@@ -159,14 +169,24 @@ function paint(ctx:CanvasRenderingContext2D):void {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    background.src = './assets/background.jpg';
-    ctx.drawImage(background,0,0);
+    sky.src = './assets/sky.png';
+    ctx.drawImage(sky,0,-150, 1280, 640);
 
-    street1.src = './assets/street.png';
-    ctx.drawImage(street1,0,FLOOR-10,700,60);
+    castle.src = './assets/castle.png';
+    ctx.drawImage(castle,0,300,200,250);
 
-    street2.src = './assets/street.png';
-    ctx.drawImage(street2,650,FLOOR-10,700,60);
+    mount.src = './assets/mount.png';
+    ctx.drawImage(mount,690,240,600,360);
+
+    shop.src = './assets/shop.png';
+    ctx.drawImage(shop,950,400,190,150);
+
+    background.src = './assets/background.png';
+    ctx.drawImage(background,0,310,WIDTH,HEIGHT/2);
+    
+    street.src = './assets/street.png';
+    ctx.drawImage(street,0,FLOOR-20,WIDTH,60);
+
 
     player1.fill(ctx);
     player2.fill(ctx);
@@ -193,12 +213,12 @@ function determineWinner(player1,player2,timerId)
         result.innerHTML = 'Tie';
     }
     else if(player1.hp > player2.hp){
-        result.innerHTML = player1.name + ' Wins';
+        result.innerHTML = player1.name + ` Wins <i class="fa-solid fa-crown"></i>`;
         player1.img.src = player1.imgSrc + `/win.png`; 
         player2.img.src = player2.imgSrc + `/lose.png`;  
     }
     else if(player1.hp < player2.hp){
-        result.innerHTML = player2.name + ' Wins';
+        result.innerHTML = player2.name + ` Wins <i class="fa-solid fa-crown"></i>`;
         player1.img.src = player1.imgSrc + `/lose.png`; 
         player2.img.src = player2.imgSrc + `/win.png`;  
     }
@@ -249,6 +269,24 @@ function reset(){
     restart= false;
 }
 
+function pauseGame(){
+    pause = !pause;
+
+    pause ? pauseBtn.innerHTML = `<i class="fa-solid fa-play"></i>` 
+    : pauseBtn.innerHTML = `<i class="fa-solid fa-stop"></i>`
+
+    if(pause){
+        result.style.display = 'flex';
+        result.innerHTML = 'Pause';
+        clearTimeout(timerId);
+    }
+    else{
+        result.style.display = 'none';
+        result.innerHTML = '';
+        decreaseTimer();
+    }
+}
+
 // ========== RUN FUNCTION ==========
 function run():void {
     
@@ -257,18 +295,7 @@ function run():void {
 
     // PAUSE
     if (key['p']) {
-        pause = !pause;
-
-        if(pause){
-            result.style.display = 'flex';
-            result.innerHTML = 'Pause';
-            clearTimeout(timerId);
-        }
-        else{
-            result.style.display = 'none';
-            result.innerHTML = '';
-            decreaseTimer();
-        }
+        pauseGame();
     }
 
     // Restart
