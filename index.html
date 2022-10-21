@@ -12,37 +12,45 @@
 
     <title>Combat Game</title>
 </head>
+
+
 <body>
-    <!-- gamebar -->
-    <div class="gameBar">
-
-        <div class="heart"><i class="fa-solid fa-heart"></i></div>
-        <div class="border">
-            <div class="hpBarContainer reverse">
-                <div class="hpBar" id="hp1"></div>
-            </div>
-        </div>
-
-        <div id="timer"></div>
-
-        <div class="border">
-            <div class="hpBarContainer">
-                <div class="hpBar" id="hp2"></div>
-            </div>
-        </div>
-        <div class="heart"><i class="fa-solid fa-heart"></i></div>
-
-        <div class="menuBtn">
-            <button id="pauseBtn">
-                <i class="fa-solid fa-stop"></i>
-            </button>
-            <button id="restartBtn"><i class="fa-sharp fa-solid fa-rotate-right"></i></button>
-        </div>
+    <div class="loader" id="loader">
+        <i class="fa-solid fa-hand-fist"></i>
     </div>
 
-    <h1 id="result"></h1>
+    <div class="game" id="game">
 
-    <canvas></canvas>
+        <!-- gamebar -->
+        <div class="gameBar">
+    
+            <div class="heart"><i class="fa-solid fa-heart"></i></div>
+            <div class="border">
+                <div class="hpBarContainer reverse">
+                    <div class="hpBar" id="hp1"></div>
+                </div>
+            </div>
+    
+            <div id="timer"></div>
+    
+            <div class="border">
+                <div class="hpBarContainer">
+                    <div class="hpBar" id="hp2"></div>
+                </div>
+            </div>
+            <div class="heart"><i class="fa-solid fa-heart"></i></div>
+    
+            <div class="menuBtn">
+                <button id="pauseBtn">
+                    <i class="fa-solid fa-stop"></i>
+                </button>
+                <button id="restartBtn"><i class="fa-sharp fa-solid fa-rotate-right"></i></button>
+            </div>
+        </div>
+    
+        <h1 id="result"></h1>
+
+    </div>
     
     <script src="script.js"></script>
     

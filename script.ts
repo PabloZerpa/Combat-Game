@@ -2,7 +2,7 @@
 // ========== VARIABLES ==========
 
 // CONSTANTS
-const canvas:HTMLCanvasElement = document.querySelector('canvas') as HTMLCanvasElement;
+const canvas:HTMLCanvasElement = document.createElement("canvas")
 const ctx:CanvasRenderingContext2D = canvas.getContext('2d')!;
 const WIDTH:number = 1280;
 const HEIGHT:number = 720;
@@ -10,14 +10,18 @@ const FLOOR:number = 680;
 const RANGE:number = 30;
 const ACE:number = 10;
 const GRAVITY:number = 5;
+const TIMER:number = 128;
 
 // HTML ELEMENTS
+let game = document.querySelector('#game') as HTMLCanvasElement;
+let loader = document.querySelector('#loader') as HTMLCanvasElement;
 let hp1 = document.querySelector('#hp1') as HTMLCanvasElement;
 let hp2 = document.querySelector('#hp2') as HTMLCanvasElement;
 let timerContainer = document.querySelector('#timer') as HTMLCanvasElement;
 let result = document.querySelector('#result') as HTMLCanvasElement;
 let pauseBtn = document.querySelector('#pauseBtn') as HTMLCanvasElement;
 let restartBtn = document.querySelector('#restartBtn') as HTMLCanvasElement;
+game.insertBefore(canvas, game.childNodes[0]);
 
 // ASSETS
 let background = new Image();
@@ -36,7 +40,7 @@ let restart:boolean = false;
 
 let player1, player2;
 let key=[];
-let timer:number = 121;
+let timer:number = TIMER;
 let timerId:number;
 
 // ========== KEYDOWN ==========
@@ -260,7 +264,7 @@ function reset(){
     result.style.display = 'none';
     result.innerHTML = '';
 
-    timer = 121;
+    timer = TIMER;
     clearTimeout(timerId);
     decreaseTimer();
     
@@ -323,5 +327,9 @@ function init():void {
     update();
 }
 
-
 window.addEventListener('load', init, false);
+
+setTimeout(function(){
+    game.style.display = 'flex';
+    loader.style.display = 'none';
+}, 7000);

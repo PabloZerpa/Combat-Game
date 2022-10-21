@@ -10,6 +10,25 @@ body{
     align-items: center;
 }
 
+.game{
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader{
+    color: rgb(12, 110, 238);
+    font-size: 128px;
+    position: absolute;
+    top: 300px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin 
+{
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .gameBar{
     position: absolute; 
     top: 20px;
